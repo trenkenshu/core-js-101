@@ -56,10 +56,16 @@ function getJSON(obj) {
  */
 function fromJSON(proto, json) {
   function C() {
-    this.prototype = proto;
+    return this;
   }
-  const r = JSON.parse(json).radius;
-  return new C.constructor(r);
+  const input = JSON.parse(json);
+  const keys = Object.keys(input);
+  const ans = new C();
+  Object.setPrototypeOf(ans, proto);
+  for (let i = 0; i < keys.length; i += 1) {
+    ans[keys[i]] = input[keys[i]];
+  }
+  return ans;
 }
 
 

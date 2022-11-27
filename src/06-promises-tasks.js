@@ -28,8 +28,18 @@
  *      .catch((error) => console.log(error.message)) // 'Error: Wrong parameter is passed!
  *                                                    //  Ask her again.';
  */
-function willYouMarryMe(/* isPositiveAnswer */) {
-  throw new Error('Not implemented');
+function willYouMarryMe(isPositiveAnswer) {
+  const prom = new Promise((resolve, reject) => {
+    if (isPositiveAnswer === true) {
+      resolve('Hooray!!! She said "Yes"!');
+    } else if (isPositiveAnswer === false) {
+      resolve('Oh no, she said "No".');
+    } else if (typeof isPositiveAnswer !== 'boolean') {
+      reject(new Error('Wrong parameter is passed! Ask her again.'));
+    }
+  });
+
+  return prom;
 }
 
 
@@ -48,8 +58,8 @@ function willYouMarryMe(/* isPositiveAnswer */) {
  *    })
  *
  */
-function processAllPromises(/* array */) {
-  throw new Error('Not implemented');
+function processAllPromises(array) {
+  return Promise.all(array);
 }
 
 /**
@@ -71,8 +81,8 @@ function processAllPromises(/* array */) {
  *    })
  *
  */
-function getFastestPromise(/* array */) {
-  throw new Error('Not implemented');
+function getFastestPromise(array) {
+  return Promise.race(array);
 }
 
 /**
@@ -92,8 +102,30 @@ function getFastestPromise(/* array */) {
  *    });
  *
  */
-function chainPromises(/* array, action */) {
-  throw new Error('Not implemented');
+function chainPromises(array, action) {
+  const prom = new Promise((res) => {
+    let resolved = 0;
+    const resData = [];
+    const process = (data) => {
+      resolved += 1;
+      resData.push(data);
+      if (resolved === array.length) {
+        const final = resData.reduce(action);
+        res(final);
+      }
+    };
+    const onReject = () => {
+      resolved += 1;
+      if (resolved === array.length) {
+        const final = resData.reduce(action);
+        res(final);
+      }
+    };
+    for (let i = 0; i < array.length; i += 1) {
+      array[i].then(process, onReject).catch((err) => err.message);
+    }
+  });
+  return prom;
 }
 
 module.exports = {
