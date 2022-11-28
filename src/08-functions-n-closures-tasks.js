@@ -24,7 +24,7 @@
  *
  */
 function getComposition(f, g) {
-  return function (x) {
+  return function c(x) {
     return f(g(x));
   };
 }
@@ -47,7 +47,7 @@ function getComposition(f, g) {
  *
  */
 function getPowerFunction(e) {
-  return function (x) {
+  return function c(x) {
     return x ** e;
   };
 }
@@ -86,7 +86,7 @@ function getPolynom() {
  *   memoizer() => the same random number  (next run, returns the previous cached result)
  */
 function memoize(func) {
-  return function () {
+  return function c() {
     if (typeof this.res === 'undefined') {
       this.res = func();
     }
