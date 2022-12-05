@@ -348,8 +348,17 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  let ans = 0;
+  const str = String(num);
+  for (let i = 0; i < str.length; i += 1) {
+    ans += Number(str[i]);
+  }
+  if (ans.toString().length > 1) {
+    ans = getDigitalRoot(ans);
+  }
+
+  return ans;
 }
 
 
@@ -374,10 +383,74 @@ function getDigitalRoot(/* num */) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const first = (str.match(/\[/g) || []).length === (str.match(/\]/g) || []).length;
+  const second = (str.match(/\{/g) || []).length === (str.match(/\}/g) || []).length;
+  const third = (str.match(/\(/g) || []).length === (str.match(/\)/g) || []).length;
+  const fourth = (str.match(/</g) || []).length === (str.match(/>/g) || []).length;
+  if (!first || !second || !third || !fourth) {
+    return false;
+  }
+  for (let i = 0; i < str.length; i += 1) {
+    if (str[i] === '('
+      && (!str.slice(i).includes(')')
+        || (str.slice(i).includes('{') && str.slice(i).includes('}')
+          && str.indexOf('{', i) < str.indexOf(')', i)
+          && str.indexOf('}', i) > str.lastIndexOf(')'))
+        || (str.slice(i).includes('[') && str.slice(i).includes(']')
+          && str.indexOf('[', i) < str.indexOf(')', i)
+          && str.indexOf(']', i) > str.lastIndexOf(')'))
+        || (str.slice(i).includes('<') && str.slice(i).includes('>')
+          && str.indexOf('<', i) < str.indexOf(')', i)
+          && str.indexOf('>', i) > str.lastIndexOf(')'))
+      )) {
+      return false;
+    }
+    if (str[i] === '['
+      && (!str.slice(i).includes(']')
+        || (str.slice(i).includes('{') && str.slice(i).includes('}')
+          && str.indexOf('{', i) < str.indexOf(']', i)
+          && str.indexOf('}', i) > str.lastIndexOf(']'))
+        || (str.slice(i).includes('(') && str.slice(i).includes(')')
+          && str.indexOf('(', i) < str.indexOf(']', i)
+          && str.indexOf(')', i) > str.lastIndexOf(']'))
+        || (str.slice(i).includes('<') && str.slice(i).includes('>')
+          && str.indexOf('<', i) < str.indexOf(']', i)
+          && str.indexOf('>', i) > str.lastIndexOf(']'))
+      )) {
+      return false;
+    }
+    if (str[i] === '{'
+      && (!str.slice(i).includes('}')
+        || (str.slice(i).includes('(') && str.slice(i).includes(')')
+          && str.indexOf('(', i) < str.indexOf('}', i)
+          && str.indexOf(')', i) > str.lastIndexOf('}'))
+        || (str.slice(i).includes('[') && str.slice(i).includes(']')
+          && str.indexOf('[', i) < str.indexOf('}', i)
+          && str.indexOf(']', i) > str.lastIndexOf('}'))
+        || (str.slice(i).includes('<') && str.slice(i).includes('>')
+          && str.indexOf('<', i) < str.indexOf('}', i)
+          && str.indexOf('>', i) > str.lastIndexOf('}'))
+      )) {
+      return false;
+    }
+    if (str[i] === '<'
+      && (!str.slice(i).includes('>')
+        || (str.slice(i).includes('(') && str.slice(i).includes(')')
+          && str.indexOf('(', i) < str.indexOf('>', i)
+          && str.indexOf(')', i) > str.lastIndexOf('>'))
+        || (str.slice(i).includes('[') && str.slice(i).includes(']')
+          && str.indexOf('[', i) < str.indexOf('>', i)
+          && str.indexOf(']', i) > str.lastIndexOf('>'))
+        || (str.slice(i).includes('{') && str.slice(i).includes('}')
+          && str.indexOf('{', i) < str.indexOf('>', i)
+          && str.indexOf('}', i) > str.lastIndexOf('>'))
+      )) {
+      return false;
+    }
+  }
+  return true;
 }
-
 
 /**
  * Returns the string with n-ary (binary, ternary, etc, where n <= 10)
