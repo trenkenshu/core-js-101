@@ -317,21 +317,18 @@ function reverseInteger(num) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
-  /* const str = String(ccn).split('').slice(0, -1);
-  const ans = [];
-  const incr = str.length % 2;
-  for (let i = 0; i < str.length; i += 1) {
-    let temp;
-    if ((incr === 0 && (i + 1) % 2 === 0) || (incr === 1 && (i + 1) % 2 === 1)) {
-      temp = Math.abs(str[i] * 2 - 9);
-    } else {
-      temp = str[i];
-    }
-    ans.push(temp);
+function isCreditCardNumber(ccn) {
+  const str = String(ccn);
+  let check = 0;
+  let count = 1;
+  let length = str.length - 1;
+  while (length > -1) {
+    const increment = count % 2 ? +str[length] : String(+str[length] * 2).split('').reduce((sum, cur) => sum + +cur, 0);
+    check += increment;
+    count += 1;
+    length -= 1;
   }
-  return ans.reduce((acc, cur) => acc + +cur, 0) % 10 === 0; */
+  return check % 10 === 0;
 }
 
 /**
