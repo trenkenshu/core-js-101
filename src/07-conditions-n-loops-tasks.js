@@ -489,10 +489,24 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  let ans = '';
+  const split = pathes.map((i) => i.split('/'));
+  split.sort((a, b) => b.length - a.length);
+  for (let i = 0; i < split[0].length; i += 1) {
+    let match = true;
+    for (let y = 1; y < split.length; y += 1) {
+      if (split[y][i] !== split[y - 1][i]) {
+        match = false;
+      }
+      if (y === split.length - 1 && match) {
+        ans += split[y][i];
+        ans += '/';
+      }
+    }
+  }
+  return ans;
 }
-
 
 /**
  * Returns the product of two specified matrixes.
@@ -512,8 +526,25 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const multRow = (matr01, matr02, row, col) => {
+    let prod = 0;
+    for (let i = 0; i < matr01[0].length; i += 1) {
+      prod += matr01[row][i] * matr02[i][col];
+    }
+    return prod;
+  };
+  const ans = [];
+  for (let i = 0; i < m1.length; i += 1) {
+    ans[i] = [];
+  }
+
+  for (let row = 0; row < m1.length; row += 1) {
+    for (let col = 0; col < m1.length; col += 1) {
+      ans[row][col] = multRow(m1, m2, row, col);
+    }
+  }
+  return ans;
 }
 
 
@@ -547,8 +578,42 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  function check(field, mark) {
+    const checking = field.filter((i) => i === mark);
+    return checking.length === 3;
+  }
+
+  for (let i = 0; i < position.length; i += 1) {
+    if (check(position[i], '0')) {
+      return '0';
+    }
+    if (check(position[i], 'X')) {
+      return 'X';
+    }
+    if (check([position[0][i], position[1][i], position[2][i]], '0')) {
+      return '0';
+    }
+    if (check([position[0][i], position[1][i], position[2][i]], 'X')) {
+      return 'X';
+    }
+  }
+
+  if (check([position[0][0], position[1][1], position[2][2]], '0')) {
+    return '0';
+  }
+  if (check([position[0][0], position[1][1], position[2][2]], 'X')) {
+    return 'X';
+  }
+
+  if (check([position[0][2], position[1][1], position[2][0]], '0')) {
+    return '0';
+  }
+  if (check([position[0][2], position[1][1], position[2][0]], 'X')) {
+    return 'X';
+  }
+
+  return undefined;
 }
 
 
