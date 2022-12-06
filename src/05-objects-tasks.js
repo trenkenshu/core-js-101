@@ -124,32 +124,182 @@ function fromJSON(proto, json) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  line: '',
+  order: [],
+  element(el) {
+    this.validate('element');
+    this.line += el;
+    this.order.push('element');
+    const obj = Object.create(cssSelectorBuilder);
+    this.addProperty(obj, 'line');
+    this.addProperty(obj, 'order');
+    this.order = [];
+    this.line = '';
+    return obj;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(val) {
+    this.validate('id');
+    this.line += '#';
+    this.line += val;
+    this.order.push('id');
+    const obj = Object.create(cssSelectorBuilder);
+    this.addProperty(obj, 'line');
+    this.addProperty(obj, 'order');
+    this.order = [];
+    this.line = '';
+    return obj;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(cl) {
+    this.validate('class');
+    this.line += '.';
+    this.line += cl;
+    this.order.push('class');
+    const obj = Object.create(cssSelectorBuilder);
+    this.addProperty(obj, 'line');
+    this.addProperty(obj, 'order');
+    this.order = [];
+    this.line = '';
+    return obj;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(a) {
+    this.validate('attr');
+    this.line += '[';
+    this.line += a;
+    this.line += ']';
+    this.order.push('attr');
+    const obj = Object.create(cssSelectorBuilder);
+    this.addProperty(obj, 'line');
+    this.addProperty(obj, 'order');
+    this.order = [];
+    this.line = '';
+    return obj;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(ps) {
+    this.validate('pseudoClass');
+    this.line += ':';
+    this.line += ps;
+    this.order.push('pseudoClass');
+    const obj = Object.create(cssSelectorBuilder);
+    this.addProperty(obj, 'line');
+    this.addProperty(obj, 'order');
+    this.order = [];
+    this.line = '';
+    return obj;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(pse) {
+    this.validate('pseudoElement');
+    this.line += '::';
+    this.line += pse;
+    this.order.push('pseudoElement');
+    const obj = Object.create(cssSelectorBuilder);
+    this.addProperty(obj, 'line');
+    this.addProperty(obj, 'order');
+    this.order = [];
+    this.line = '';
+    return obj;
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(...args) {
+    let temp = '';
+    for (let i = 0; i < args.length; i += 1) {
+      temp += args[i];
+      if (i < args.length - 1) {
+        temp += ' ';
+      }
+    }
+    this.line = temp;
+    return this;
+  },
+
+  stringify() {
+    const temp = this.line;
+    this.line = '';
+    this.order = [];
+    return temp;
+  },
+
+  toString() {
+    const temp = this.line;
+    this.line = '';
+    this.order = [];
+    return temp;
+  },
+
+  validate(addition) {
+    switch (addition) {
+      case 'element':
+        if (this.order.includes('element')) {
+          throw Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+        }
+        break;
+
+      case 'id':
+        if (this.order.includes('id')) {
+          throw Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+        }
+        break;
+
+      case 'pseudoElement':
+        if (this.order.includes('pseudoElement')) {
+          throw Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+        }
+        break;
+
+      default:
+    }
+
+    switch (addition) {
+      case 'element':
+        if (this.order.includes('pseudoElement') || this.order.includes('class')
+        || this.order.includes('pseudoClass') || this.order.includes('attr')
+        || this.order.includes('id')) {
+          throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+        }
+        break;
+
+      case 'id':
+        if (this.order.includes('pseudoElement') || this.order.includes('class')
+        || this.order.includes('pseudoClass') || this.order.includes('attr')) {
+          throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+        }
+        break;
+
+      case 'class':
+        if (this.order.includes('pseudoElement') || this.order.includes('attr')
+          || this.order.includes('pseudoClass')) {
+          throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+        }
+        break;
+
+      case 'attr':
+        if (this.order.includes('pseudoElement') || this.order.includes('pseudoClass'
+          || this.order.includes('attr'))) {
+          throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+        }
+        break;
+
+      case 'pseudoClass':
+        if (this.order.includes('pseudoElement')) {
+          throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+        }
+        break;
+
+      default:
+    }
+    return true;
+  },
+
+  addProperty(obj, name) {
+    Object.defineProperty(obj, name, {
+      value: this[name],
+      writable: true,
+      configurable: true,
+    });
   },
 };
 
