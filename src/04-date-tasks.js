@@ -116,15 +116,12 @@ function angleBetweenClockHands(date) {
   hours = hours < 0 ? hours + 24 : hours;
   hours %= 12;
   const minutes = date.getMinutes();
-  const piWatchMin = Math.PI / 30;
-  const piWatchHour = Math.PI / 6;
-  const angleMin = minutes * piWatchMin;
-  const angleH = hours * piWatchHour + angleMin / 12;
+  const angleMin = minutes * 6;
+  const angleH = hours * 30 + minutes / 2;
+
   let dif = angleH >= angleMin ? angleH - angleMin : angleMin - angleH;
-  dif = dif > Math.PI ? dif - Math.PI : dif;
-  /* TO MACH TESTS WHICH ARE SLIGHTLY DIFFERENT */
-  dif = dif === 0.8726646259971647 ? 0.8726646259971648 : dif;
-  dif = dif === 0.47996554429844096 ? 0.4799655442984406 : dif;
+  dif = dif > 180 ? dif - 180 : dif;
+  dif = (dif * Math.PI) / 180;
   return dif;
 }
 
